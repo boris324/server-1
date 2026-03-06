@@ -44,6 +44,7 @@ use OCP\Files\UnseekableException;
 use OCP\ITempManager;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use OCP\Lock\ILockingProvider;
 use OCP\Lock\LockedException;
@@ -1426,6 +1427,7 @@ class View {
 		$path = Filesystem::normalizePath($this->fakeRoot . '/' . $path);
 
 		$mount = Filesystem::getMountManager()->find($path);
+		/** @var ?Storage $storage */
 		$storage = $mount->getStorage();
 		$internalPath = $mount->getInternalPath($path);
 		if ($storage) {
@@ -1501,6 +1503,7 @@ class View {
 		$path = $this->getAbsolutePath($directory);
 		$path = Filesystem::normalizePath($path);
 		$mount = $this->getMount($directory);
+		/** @var ?Storage $storage */
 		$storage = $mount->getStorage();
 		$internalPath = $mount->getInternalPath($path);
 		if (!$storage) {
@@ -1508,7 +1511,7 @@ class View {
 		}
 
 		$cache = $storage->getCache($internalPath);
-		$user = \OC_User::getUser();
+		$user = Server::get(IUserSession::class)->getUser();
 
 		if (!$directoryInfo) {
 			$data = $this->getCacheEntry($storage, $internalPath, $directory);
@@ -1642,7 +1645,7 @@ class View {
 						$rootEntry['permissions'] = $permissions & (Constants::PERMISSION_ALL - (Constants::PERMISSION_UPDATE | Constants::PERMISSION_DELETE));
 					}
 
-					$rootEntry['path'] = substr(Filesystem::normalizePath($path . '/' . $rootEntry['name']), strlen($user) + 2); // full path without /$user/
+					$rootEntry['path'] = substr(Filesystem::normalizePath($path . '/' . $rootEntry['name']), strlen($user->getUID()) + 2); // full path without /$user/
 
 					// if sharing was disabled for the user we remove the share permissions
 					if ($sharingDisabled) {

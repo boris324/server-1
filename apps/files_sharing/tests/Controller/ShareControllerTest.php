@@ -157,7 +157,7 @@ class ShareControllerTest extends \Test\TestCase {
 
 	protected function tearDown(): void {
 		\OC_Util::tearDownFS();
-		\OC_User::setUserId('');
+		self::setUserId('');
 		Filesystem::tearDown();
 		$user = Server::get(IUserManager::class)->get($this->user);
 		if ($user !== null) {
@@ -168,7 +168,7 @@ class ShareControllerTest extends \Test\TestCase {
 		Server::get(ISession::class)->set('public_link_authenticated', '');
 
 		// Set old user
-		\OC_User::setUserId($this->oldUser);
+		self::setUserId($this->oldUser);
 		\OC_Util::setupFS($this->oldUser);
 		parent::tearDown();
 	}

@@ -63,7 +63,7 @@ class ShareTest extends \Test\TestCase {
 		$this->user6 = $this->userManager->createUser($this->getUniqueID('user6_'), 'pass');
 		$groupAndUserId = $this->getUniqueID('groupAndUser_');
 		$this->groupAndUser_user = $this->userManager->createUser($groupAndUserId, 'pass');
-		\OC_User::setUserId($this->user1->getUID());
+		self::setUserId($this->user1->getUID());
 
 		$this->groupManager->clearBackends();
 		$this->groupManager->addBackend(new \Test\Util\Group\Dummy());
